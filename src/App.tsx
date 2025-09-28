@@ -5,21 +5,16 @@ import WelcomePage from "./Pages/Welcome";
 import LoginPage from "./Pages/LoginPage";
 import ViewUsers from "./Pages/ViewUsers";
 
+function RenderLoginPage() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const timer = setTimeout(() => navigate("/userMatrix/login"), 3000);
+    return () => clearTimeout(timer);
+  }, [navigate]);
+  return <WelcomePage />;
+}
+
 function App() {
-  function RenderLoginPage() {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-      const timer: NodeJS.Timeout = setTimeout(() => {
-        navigate("/userMatrix/login");
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }, [navigate]);
-
-    return <WelcomePage />;
-  }
-
   return (
     <BrowserRouter>
       <Routes>

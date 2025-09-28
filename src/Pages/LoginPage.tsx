@@ -1,46 +1,33 @@
-import React, { useState } from "react";
-import { UserDetails, Errors, validateFields } from "../Utils/commonfunction";
-import { REQRES_API_KEY } from "../Utils/consts";
+import React, { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../Store/hooks";
+import { login } from "../Store/Slice/authSlice";
 import { useNavigate } from "react-router-dom";
+import { validateEmail, validatePassword } from "../Utils/validators";
+import Loader from "../Components/Loader";
 
 export default function LoginPage() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const auth = useAppSelector((s) => s.auth);
 
-  const [userDetails, setUserDetails] = useState<UserDetails>({
-    loginEmail: "eve.holt@reqres.in",
-    loginPassword: "cityslicka",
-  });
-  const [errors, setErrors] = useState<Errors>({
-    loginEmailError: false,
-    passwordError: false,
-    loginError: false,
-  });
+  const [email, setEmail] = useState("eve.holt@reqres.in");
+  const [password, setPassword] = useState("cityslicka");
+  const [localErrors, setLocalErrors] = useState({ email: "", password: "" });
 
-  const loginUser = async () => {
-    try {
-      const response = await fetch("https://reqres.in/api/login", {
-        method: "POST",
-        headers: {
-          "x-api-key": REQRES_API_KEY,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userDetails.loginEmail,
-          password: userDetails.loginPassword,
-        }),
-      });
-
-      const data = await response.json();
-      console.log("resp", response.status);
-      console.log("data", data);
-      if (response.status != 200) {
-        setErrors((prev) => ({ ...prev, loginError: true }));
-      } else {
-        navigate(`/userMatrix/user/${data.token}`);
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
+  useEffect(() => {
+    if (auth.token) {
+      navigate(`/userMatrix/user/${auth.token}`);
     }
+  }, [auth.token, navigate]);
+
+  const onSubmit = async () => {
+    const errs = { email: "", password: "" };
+    if (!validateEmail(email)) errs.email = "Invalid email";
+    if (!validatePassword(password)) errs.password = "Invalid password";
+    setLocalErrors(errs);
+    if (errs.email || errs.password) return;
+
+    dispatch(login({ email, password }));
   };
 
   return (
@@ -52,36 +39,23 @@ export default function LoginPage() {
             <input
               className="form-control"
               type="text"
-              name="loginEmail"
-              onChange={(e) => validateFields(e, setUserDetails, setErrors)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          {errors.loginEmailError ? (
-            <label className="text-danger">
-              <em>enter valid email "abc.abc@reqres.in"</em>
-            </label>
-          ) : (
-            <></>
-          )}
+          {localErrors.email && <label className="text-danger"><em>{localErrors.email}</em></label>}
+
           <div className="input-group mt-4">
             <i className="bi bi-lock input-group-text"></i>
             <input
               className="form-control"
-              name="loginPassword"
+              value={password}
               type="password"
-              onChange={(e) => validateFields(e, setUserDetails, setErrors)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {errors.passwordError ? (
-            <label className="text-danger">
-              <em>
-                enter valid password,must be 10 charaters, allowed lowercase
-                alone
-              </em>
-            </label>
-          ) : (
-            <></>
-          )}
+          {localErrors.password && <label className="text-danger"><em>{localErrors.password}</em></label>}
+
           <div className="form-check mt-4">
             <input className="form-check-input" type="checkbox" />
             <label className="form-check-label">Remember me</label>
@@ -89,18 +63,13 @@ export default function LoginPage() {
 
           <button
             className="btn btn-primary mt-4 w-100"
-            disabled={errors.loginEmailError || errors.passwordError}
-            onClick={() => loginUser()}
+            disabled={auth.loading}
+            onClick={onSubmit}
           >
-            Login
+            {auth.loading ? <Loader size={18} /> : "Login"}
           </button>
-          {errors.loginError ? (
-            <label className="text-danger">
-              <em>error user not found</em>
-            </label>
-          ) : (
-            <></>
-          )}
+
+          {auth.error && <label className="text-danger"><em>{auth.error}</em></label>}
         </div>
       </div>
     </div>
