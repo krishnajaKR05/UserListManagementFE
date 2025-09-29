@@ -14,7 +14,7 @@ export default function UserTable({
     <table className="table table-striped">
       <thead>
         <tr>
-          <th>{" "}</th>
+          <th> </th>
           <th>Email</th>
           <th>First Name</th>
           <th>Last Name</th>

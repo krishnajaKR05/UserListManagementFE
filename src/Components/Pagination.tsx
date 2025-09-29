@@ -13,13 +13,16 @@ export default function Pagination({
   return (
     <nav>
       <ul className="pagination justify-content-end">
-        <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+        <li className={`page-item me-2 ${page === 1 ? "disabled" : ""}`}>
           <button className="page-link" onClick={() => onPage(page - 1)}>
             {"<"}
           </button>
         </li>
         {pages.map((p) => (
-          <li key={p} className={`page-item ${p === page ? "active" : ""}`}>
+          <li
+            key={p}
+            className={`page-item me-2 ${p === page ? "active" : ""}`}
+          >
             <button className="page-link" onClick={() => onPage(p)}>
               {p}
             </button>

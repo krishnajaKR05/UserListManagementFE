@@ -11,17 +11,17 @@ export default function UserCard({
   onDelete: (id: number) => void;
 }) {
   return (
-    <div className="card mb-3" style={{ width: 220 }}>
+    <div className="card" style={{ width: 195 }}>
       <img
         src={user.avatar}
-        className="card-img-top"
+        className="card-img-top h-50"
         alt={`${user.first_name}`}
       />
       <div className="card-body">
         <h5 className="card-title">
           {user.first_name} {user.last_name}
         </h5>
-        <p className="card-text">{user.email}</p>
+        <div className="card-text h-50">{user.email}</div>
         <div className="d-flex justify-content-between">
           <button
             className="btn btn-sm btn-primary"

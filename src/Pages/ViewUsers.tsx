@@ -13,15 +13,20 @@ import UserCard from "../Components/UserCard";
 import Pagination from "../Components/Pagination";
 import ManageUserModal from "../Components/ManageUserModal";
 import useDebounce from "../Hooks/useDebounce";
+import { LogoutOutlined } from "@ant-design/icons";
+import "../index.css";
+import { Navigate, useNavigate } from "react-router-dom";
+import { logout } from "../Store/Slice/authSlice";
 
 export default function ViewUsers() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const usersState = useAppSelector((s) => s.users);
   const [view, setView] = useState<"table" | "card">("table");
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 250);
   const [page, setPage] = useState(1);
-  const pageSize = 6; 
+  const pageSize = 6;
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<User | null>(null);
 
@@ -59,11 +64,19 @@ export default function ViewUsers() {
     dispatch(deleteUser(id));
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/userMatrix/login");
+  };
+
   return (
-    <div className="vh-100 d-flex flex-column">
+    <div className="vh-100 d-flex flex-column app">
       <div className="bg-dark text-white w-100 d-flex justify-content-end align-items-center p-3">
-        <h5 className="m-2 mb-0">UserName</h5>
-        <button className="btn btn-danger btn-sm ms-2">Logout</button>
+        <h5 className="m-2 mb-0 bg-dark">{"Eve Holt"}</h5>
+        <LogoutOutlined
+          style={{ backgroundColor: "red", padding: "0.75%" }}
+          onClick={() => handleLogout()}
+        />
       </div>
 
       <div className="container bg-white h-75 mt-4 p-4">

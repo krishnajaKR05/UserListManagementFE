@@ -4,6 +4,7 @@ import { login } from "../Store/Slice/authSlice";
 import { useNavigate } from "react-router-dom";
 import { validateEmail, validatePassword } from "../Utils/validators";
 import Loader from "../Components/Loader";
+import "../index.css";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -22,8 +23,10 @@ export default function LoginPage() {
 
   const onSubmit = async () => {
     const errs = { email: "", password: "" };
-    if (!validateEmail(email)) errs.email = "Invalid email";
-    if (!validatePassword(password)) errs.password = "Invalid password";
+    if (!validateEmail(email))
+      errs.email = "Invalid email, email format 'abc.abc@reqres.in' ";
+    if (!validatePassword(password))
+      errs.password = "Invalid password, Only 10 charaters allowed";
     setLocalErrors(errs);
     if (errs.email || errs.password) return;
 
@@ -31,9 +34,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <div className="d-flex justify-content-center align-items-center vh-100 app">
       <div className="card p-3" style={{ width: "35%" }}>
-        <div className="card-body">
+        <div className="card-body bg-white">
           <div className="input-group">
             <i className="bi bi-person input-group-text"></i>
             <input
@@ -43,7 +46,11 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          {localErrors.email && <label className="text-danger"><em>{localErrors.email}</em></label>}
+          {localErrors.email && (
+            <label className="text-danger">
+              <em>{localErrors.email}</em>
+            </label>
+          )}
 
           <div className="input-group mt-4">
             <i className="bi bi-lock input-group-text"></i>
@@ -54,12 +61,11 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {localErrors.password && <label className="text-danger"><em>{localErrors.password}</em></label>}
-
-          <div className="form-check mt-4">
-            <input className="form-check-input" type="checkbox" />
-            <label className="form-check-label">Remember me</label>
-          </div>
+          {localErrors.password && (
+            <label className="text-danger">
+              <em>{localErrors.password}</em>
+            </label>
+          )}
 
           <button
             className="btn btn-primary mt-4 w-100"
@@ -69,7 +75,11 @@ export default function LoginPage() {
             {auth.loading ? <Loader size={18} /> : "Login"}
           </button>
 
-          {auth.error && <label className="text-danger"><em>{auth.error}</em></label>}
+          {auth.error && (
+            <label className="text-danger">
+              <em>{auth.error}</em>
+            </label>
+          )}
         </div>
       </div>
     </div>
